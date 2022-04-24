@@ -13,6 +13,7 @@ class SearchBar extends React.Component {
       <div>
         <input type="text" value={filterText}
           onInput={this.props.onHandleInput}/>
+        <br />
         <label>
           <input type="checkBox" onChange={this.props.onStockChange}/>
           Only show products in stock
@@ -31,14 +32,31 @@ function ProductTable (props) {
     {category: "Electronics", price: "$399.99", stocked: false, name: "iPhone 5"},
     {category: "Electronics", price: "$199.99", stocked: true, name: "Nexus 7"}
   ];
+  let lastCategory = '';
+  let rows = [];
+  const inStockOnly = props.inStockOnly;
+  const filterText = props.filterText && props.filterText.toLocaleLowerCase();
+  tabData.forEach((item, index) => {
+    const name = item.name.toLocaleLowerCase();
+    if (!name.includes(filterText)) {
+      return;
+    }
+    if (inStockOnly && !item.stocked) {
+      return;
+    }
+    if (item.category !== lastCategory) {
+      rows.push(<ProductCategoryRow category={item.category} key={item.category}/>);
+    }
+    rows.push(<ProductRow name={item.name} price={item.price} key={item.name}/>);
+    lastCategory = item.category;
+  });
   return (
     <div>
-      <div>Name</div>
-      <div>Price</div>
-      <div>
-        <ProductCategoryRow />
-        <ProductRow />
+      <div className='horizontal'>
+        <div>Name</div>
+        <div>Price</div>
       </div>
+      <div>{rows}</div>
     </div>
   )
 }
@@ -54,8 +72,9 @@ function ProductCategoryRow(props) {
 
 function ProductRow (props) {
   return (
-    <div>
-      
+    <div className='horizontal'>
+      <div>{props.name}</div>
+      <div>{props.price}</div>
     </div>
   )
 }
@@ -90,7 +109,7 @@ class FilterableProductTable extends React.Component {
           onHandleInput={(e) => this.handleInput(e)}
           onStockChange={e => this.handleStockChange(e)}
           />
-        <ProductTable />
+        <ProductTable filterText={filterText} inStockOnly={inStockOnly}/>
       </div>
     )
   }

@@ -48,3 +48,12 @@ ol, ul {
 .game-info {
   margin-left: 20px;
 }
+#root {
+  width: 30%;
+}
+.horizontal {
+  display: flex;
+}
+.horizontal > div {
+  width: 50%;
+}
